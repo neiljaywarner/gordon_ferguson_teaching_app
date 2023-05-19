@@ -3,9 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'DbProvider.dart';
 import 'Post.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 
 Future<List<Post>> fetchPost() async {
   final response = await http.get(Uri.parse('http://gordonferguson.org/wp-json/wp/v2/posts?per_page=100'));
@@ -45,8 +48,7 @@ class _MyAppState extends State<MyApp> {
     if (selectedIndex==1) {
       return ArticleFutureBuilder(posts: DBProvider.db.getAllFavorites());
     } else if (selectedIndex == 2) {
-      //return AboutPage();
-      return Text('TODO: About');
+      return AboutPage();
     } else {
       return home;
     }
@@ -143,7 +145,7 @@ class PostCard extends StatelessWidget {
   );
 }
 
-/*
+
 class AboutPage extends StatelessWidget {
 
   final resourcesHtml = '''
@@ -159,7 +161,10 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.all(12),
-    child: Html(data: resourcesHtml, onLinkTap: (String url) => launch(url, forceSafariVC: false),),
+    child: Html(data: resourcesHtml, onLinkTap: (url, _, __) {
+      debugPrint('url= $url');
+      launchUrl(Uri.parse(url!),mode: LaunchMode.externalApplication );
+    },),
+
   );
 }
-*/
