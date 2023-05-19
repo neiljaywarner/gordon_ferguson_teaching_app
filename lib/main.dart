@@ -2,16 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 
 import 'DbProvider.dart';
 import 'Post.dart';
-import 'article_detail.dart';
 
 Future<List<Post>> fetchPost() async {
-  final response = await http.get('http://gordonferguson.org/wp-json/wp/v2/posts?per_page=100');
+  final response = await http.get(Uri.parse('http://gordonferguson.org/wp-json/wp/v2/posts?per_page=100'));
 
   if (response.statusCode == 200) {
     // If the call to the server was successful, parse the JSON
@@ -19,7 +16,7 @@ Future<List<Post>> fetchPost() async {
   } else {
     // If that call was not successful, throw an error.
     //todo: fimber and crashlytics
-    throw Exception('Failed to load posts:' + response.statusCode.toString());
+    throw Exception('Failed to load posts:${response.statusCode}');
   }
 }
 
@@ -28,7 +25,7 @@ void main() => runApp(MyApp(posts: fetchPost()));
 class MyApp extends StatefulWidget {
   final Future<List<Post>> posts;
 
-  MyApp({Key key, this.posts}) : super(key: key);
+  const MyApp({Key? key, required this.posts}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -36,7 +33,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
-  ArticleFutureBuilder home;
+  late ArticleFutureBuilder home;
 
   @override
   void initState() {
@@ -48,7 +45,8 @@ class _MyAppState extends State<MyApp> {
     if (selectedIndex==1) {
       return ArticleFutureBuilder(posts: DBProvider.db.getAllFavorites());
     } else if (selectedIndex == 2) {
-      return AboutPage();
+      //return AboutPage();
+      return Text('TODO: About');
     } else {
       return home;
     }
@@ -60,18 +58,18 @@ class _MyAppState extends State<MyApp> {
     title: 'Gordon Ferguson',
     theme: ThemeData(primarySwatch: Colors.blue),
     home: Scaffold(
-      appBar: AppBar(title: Text('Gordon Ferguson')),
+      appBar: AppBar(title: const Text('Gordon Ferguson')),
       body: Center(
         child: _buildFavoritesWidget(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-          BottomNavigationBarItem(icon: Icon(Icons.star), title: Text('Favorites')),
-          BottomNavigationBarItem(icon: Icon(Icons.info), title: Text('About')),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorites'),
+          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
         currentIndex: _selectedIndex,
-        fixedColor: Theme.of(context).accentColor,
+        fixedColor: Theme.of(context).colorScheme.secondary,
         onTap: _onItemTapped,
       ),
     ),
@@ -86,8 +84,8 @@ class _MyAppState extends State<MyApp> {
 
 class ArticleFutureBuilder extends StatelessWidget {
   const ArticleFutureBuilder({
-    Key key,
-    @required this.posts,
+    Key? key,
+    required this.posts,
   }) : super(key: key);
 
   final Future<List<Post>> posts;
@@ -98,23 +96,23 @@ class ArticleFutureBuilder extends StatelessWidget {
     builder: (context, snapshot) {
       if (snapshot.connectionState != ConnectionState.done) {
         debugPrint("Connection state not done");
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       }
       debugPrint("Connection state done");
 
-      if (snapshot.hasData && snapshot.data.isNotEmpty) {
-        debugPrint("has data-data not null: numPosts=" + snapshot.data.length.toString());
+      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+        debugPrint("has data-data not null: numPosts=${snapshot.data!.length}");
         return ListView.builder(
-            itemCount: snapshot.data.length,
+            itemCount: snapshot.data!.length,
             padding: const EdgeInsets.all(8.0),
-            itemBuilder: (BuildContext _context, int i) => PostCard(post: snapshot.data[i])
+            itemBuilder: (BuildContext context, int i) => PostCard(post: snapshot.data![i])
         );
       } else if (snapshot.hasError) {
         debugPrint("Has Error ${snapshot.error}");
-        return Center(child:Text('No articles or error loading articles.'));
+        return const Center(child:Text('No articles or error loading articles.'));
       } else {
         debugPrint("No favorites");
-        return Center(child:Text('Star an article an it will show up here!'));
+        return const Center(child:Text('Star an article an it will show up here!'));
       }
     },
   );
@@ -122,21 +120,21 @@ class ArticleFutureBuilder extends StatelessWidget {
 
 class PostCard extends StatelessWidget {
 
-  final Post post;
+  final Post? post;
 
-  PostCard({Key key, this.post}) : super(key: key);
+  const PostCard({Key? key, this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(post: post))),
+    //onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(post: post))),
     child: Card(
       child: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top:8),
             child: ListTile(
-              title: Text(post.title),
-              subtitle: Html(data: post.excerpt,),
+              title: Text(post!.title),
+              //subtitle: Html(data: post?.excerpt,),
             ),
           ),
         ],
@@ -145,6 +143,7 @@ class PostCard extends StatelessWidget {
   );
 }
 
+/*
 class AboutPage extends StatelessWidget {
 
   final resourcesHtml = '''
@@ -163,3 +162,4 @@ class AboutPage extends StatelessWidget {
     child: Html(data: resourcesHtml, onLinkTap: (String url) => launch(url, forceSafariVC: false),),
   );
 }
+*/
