@@ -17,7 +17,7 @@ class Post {
   final String imageUrl;
   final String content;
 
-  Post({required this.id, required this.excerpt, required this.title, required this.link, required this.imageUrl, required this.content});
+  Post({this.id, this.excerpt, this.title, this.link, this.imageUrl, this.content});
 
   // TODO: Consider when to embed if ever?
   // eg is jetpack_featured_media_url good enough
@@ -25,7 +25,7 @@ class Post {
   factory Post.fromJson(Map<String, dynamic> json) {
     String oldBuilder = json['meta']['_et_pb_use_builder'];
     String content = json['meta']['_et_pb_old_content'];
-    if (content.isEmpty) {
+    if (content == null || content.length == 0) {
       content = json['content']['rendered'];
     }
 
@@ -42,23 +42,23 @@ class Post {
     excerpt = HtmlUnescape().convert(excerpt);
     content = HtmlUnescape().convert(content);
     return Post(
-      id: id,
-      title: title,
-      excerpt: excerpt,
-      link: json['link'],
-      imageUrl: json['jetpack_featured_media_url'],
-      content: content
+        id: id,
+        title: title,
+        excerpt: excerpt,
+        link: json['link'],
+        imageUrl: json['jetpack_featured_media_url'],
+        content: content
     );
   }
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'title': title,
-        'excerpt': excerpt,
-        'link': link,
-        'imageUrl': imageUrl,
-        'content': content
-      };
+    'id': id,
+    'title': title,
+    'excerpt': excerpt,
+    'link': link,
+    'imageUrl': imageUrl,
+    'content': content
+  };
 
   factory Post.fromMap(Map<String, dynamic> map) => Post(
       id: map['id'],
@@ -67,5 +67,5 @@ class Post {
       link: map['link'],
       imageUrl: map['imageUrl'],
       content: map['content']
-    );
+  );
 }

@@ -8,16 +8,15 @@ class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
 
-  static Database? _database;
+  static Database _database;
 
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
-    }
+    if (_database != null)
+      return _database;
 
     // if _database is null we instantiate it
     _database = await initDB();
-    return _database!;
+    return _database;
   }
 
   Future<List<Post>> getAllFavorites() async {
@@ -45,13 +44,13 @@ class DBProvider {
   //fixme
   Future<bool> isFavorite(Post post) async => ((await getNote(post.id)) != null);
 
-  Future<Post?> getNote(int id) async {
+  Future<Post> getNote(int id) async {
     var dbClient = await database;
-    List<Map<String, Object?>> result = await dbClient.query("favorites",
+    List<Map> result = await dbClient.query("favorites",
         where: 'id = ?',
         whereArgs: [id]);
 
-    if (result.isNotEmpty) {
+    if (result.length > 0) {
       return Post.fromMap(result.first);
     }
 
@@ -64,7 +63,7 @@ class DBProvider {
     return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute(
-        '''
+          '''
         CREATE TABLE favorites (
           id INTEGER PRIMARY KEY,
           title TEXT,
@@ -82,9 +81,9 @@ class DBProvider {
 
 
 
-  
 
-  // CRUD - create, retrieve
+
+// CRUD - create, retrieve
 // factory Post.fromMap(Map<String, dynamic> map) => Post(
 //      title: map['title'],
 //      excerpt: map['excerpt'],
