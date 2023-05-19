@@ -1,7 +1,7 @@
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+//import 'package:share/share.dart';
 
 import 'DbProvider.dart';
 import 'Post.dart';
@@ -9,7 +9,7 @@ import 'Post.dart';
 class DetailScreen extends StatefulWidget {
   final Post post;
 
-  DetailScreen({Key key, @required this.post}) : super(key: key);
+  DetailScreen({Key? key, required this.post}) : super(key: key);
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -18,9 +18,9 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   var _shareMessage;
-  List<String> favorites = List<String>();
+  List<String> favorites = [];
 
-  int length;
+  int length = 0;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<Post>(
+  Widget build(BuildContext context) => FutureBuilder<Post?>(
       future: DBProvider.db.getNote(widget.post.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -45,7 +45,8 @@ class _DetailScreenState extends State<DetailScreen> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.share),
-                  onPressed: () => Share.share(_shareMessage),
+                  onPressed: () => debugPrint(_shareMessage),
+                  //onPressed: () => Share.share(_shareMessage),
                 ),
                 IconButton(
                   icon: isFavorite ? Icon(Icons.star) : Icon(Icons.star_border),

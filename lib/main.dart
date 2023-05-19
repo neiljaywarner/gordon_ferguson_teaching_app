@@ -9,6 +9,8 @@ import 'DbProvider.dart';
 import 'Post.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'article_detail.dart';
+
 
 Future<List<Post>> fetchPost() async {
   final response = await http.get(Uri.parse('http://gordonferguson.org/wp-json/wp/v2/posts?per_page=100'));
@@ -128,7 +130,7 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-    //onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(post: post))),
+    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(post: post!))),
     child: Card(
       child: Column(
         children: <Widget>[

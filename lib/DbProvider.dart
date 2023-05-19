@@ -45,7 +45,7 @@ class DBProvider {
   //fixme
   Future<bool> isFavorite(Post post) async => ((await getNote(post.id)) != null);
 
-  Future<Post?> getNote(int id) async {
+  Future<Post?>? getNote(int id) async {
     var dbClient = await database;
     List<Map<String, Object?>> result = await dbClient.query("favorites",
         where: 'id = ?',
