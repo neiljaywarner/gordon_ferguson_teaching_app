@@ -1,7 +1,7 @@
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:flutter/material.dart';
-//import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'DbProvider.dart';
 import 'Post.dart';
@@ -45,8 +45,7 @@ class _DetailScreenState extends State<DetailScreen> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.share),
-                  onPressed: () => debugPrint(_shareMessage),
-                  //onPressed: () => Share.share(_shareMessage),
+                  onPressed: () => Share.share(_shareMessage),
                 ),
                 IconButton(
                   icon: isFavorite ? Icon(Icons.star) : Icon(Icons.star_border),
